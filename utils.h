@@ -21,7 +21,6 @@ void print_plaintext(uint8_t *plaintext) {
 }
 
 void recv_message(uint8_t *message) {
-    int ret = sodium_init();
     strcpy(message + 16, "\"Beware the Jabberwock, my son!\"");
 }
 
