@@ -1,5 +1,3 @@
-import sys 
-import os
 import yaml
 import flask
 
@@ -20,6 +18,16 @@ class Person(object):
 
 
 def print_nametag(format_string, person):
+    """
+    Prints a formatted nametag for a person.
+
+    Parameters:
+    format_string (str): The format string with a placeholder for the person's name.
+    person (str): The name of the person to be inserted into the format string.
+
+    Returns:
+    None
+    """
     print(format_string.format(person=person))
 
 
@@ -52,8 +60,8 @@ if __name__ == '__main__':
     print("3. Yaml deserialization vulnerability:")
     print("4. Use of assert statements vulnerability:")
     choice  = input("Select vulnerability: ")
-    if choice == "1": 
-        new_person = Person("Vickie")  
+    if choice == "1":
+        new_person = Person("Vickie")
         print_nametag(input("Please format your nametag: "), new_person)
     elif choice == "2":
         urlib_version = input("Choose version of urllib: ")
