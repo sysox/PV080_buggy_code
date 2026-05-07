@@ -2,8 +2,10 @@ import sys
 import os
 import yaml
 import flask
+from urllib.parse import urlparse
 
 app = flask.Flask(__name__)
+ALLOWED_HOSTS = {"www.google.com", "example.com"}
 
 
 """
@@ -30,6 +32,10 @@ def print_nametag(format_string, person):
 """
 Fetches the website
 """
+def is_allowed_url(url):
+    parsed = urlparse(url)
+    return parsed.scheme in ("http", "https") and parsed.hostname in ALLOWED_HOSTS
+
 def fetch_website(urllib_version, url):
     # Import the requested version (2 or 3) of urllib
     exec(f"import urllib{urllib_version} as urllib", globals())
@@ -40,6 +46,8 @@ def fetch_website(urllib_version, url):
         import urllib2 as urllib
 
     try:
+        if not is_allowed_url(url):
+            raise ValueError("URL is not allowed")
         http = urllib.PoolManager()
         r = http.request('GET', url)
     except:
