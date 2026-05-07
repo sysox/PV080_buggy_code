@@ -27,13 +27,19 @@ Prints the nametag
 def print_nametag(format_string, person):
     print(format_string.format(person=person))
 
-
+"""
+Fetches the website
+"""
 def fetch_website(urllib_version, url):
     # Import the requested version (2 or 3) of urllib
     exec(f"import urllib{urllib_version} as urllib", globals())
     # Fetch and print the requested URL
- 
-    try: 
+    try:
+        import urllib3 as urllib
+    except:
+        import urllib2 as urllib
+
+    try:
         http = urllib.PoolManager()
         r = http.request('GET', url)
     except:
