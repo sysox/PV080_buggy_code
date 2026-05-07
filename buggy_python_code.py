@@ -2,6 +2,8 @@ import sys
 import os
 import yaml
 import flask
+import importlib
+
 
 app = flask.Flask(__name__)
 
@@ -14,27 +16,47 @@ def index():
 
         
 CONFIG = {"API_KEY": "771df488714111d39138eb60df756e6b"}
-class Person(object):
+class Person:
     def __init__(self, name):
         self.name = name
 
-
+"""
+Prints the nametag
+"""
 def print_nametag(format_string, person):
     print(format_string.format(person=person))
 
-
+"""
+Fetches the website
+"""
 def fetch_website(urllib_version, url):
-    # Import the requested version (2 or 3) of urllib
-    exec(f"import urllib{urllib_version} as urllib", globals())
-    # Fetch and print the requested URL
- 
-    try: 
-        http = urllib.PoolManager()
-        r = http.request('GET', url)
-    except:
-        print('Exception')
+    # Validate urllib_version input
+    if urllib_version not in ("2", "3"):
+        raise ValueError("Only urllib2 and urllib3 are supported.")
 
+    # Import the correct urllib module safely
+    module_name = f"urllib{urllib_version}"
+    try:
+        urllib = importlib.import_module(module_name)
+    except ImportError:
+        print(f"Could not import {module_name}")
+        return
 
+    try:
+        if not is_allowed_url(url):
+            raise ValueError("URL is not allowed")
+        if urllib_version == "3":
+            http = urllib.PoolManager()
+            r = http.request('GET', url)
+        elif urllib_version == "2":
+            response = urllib.urlopen(url)
+            r = response.read()
+    except Exception as e:
+        print(f'Exception: {e}')
+
+"""
+Loads yaml file
+"""
 def load_yaml(filename):
     stream = open(filename)
     deserialized_data = yaml.load(stream, Loader=yaml.Loader) #deserializing data
@@ -52,7 +74,7 @@ if __name__ == '__main__':
     print("3. Yaml deserialization vulnerability:")
     print("4. Use of assert statements vulnerability:")
     choice  = input("Select vulnerability: ")
-    if choice == "1": 
+    if choice == "1":
         new_person = Person("Vickie")  
         print_nametag(input("Please format your nametag: "), new_person)
     elif choice == "2":
